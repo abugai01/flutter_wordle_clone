@@ -9,44 +9,50 @@ class Keyboard extends StatelessWidget {
 
   const Keyboard(this.field, {Key? key}) : super(key: key);
 
+  //todo: keyboard model?
   @override
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
-      //todo: is there a better way to organize this?
+      //todo: and what about special buttons?
       Row(children: <Widget>[
-        KeyboardButton(LetterModel('Q')),
-        KeyboardButton(LetterModel('W')),
-        KeyboardButton(LetterModel('E')),
-        KeyboardButton(LetterModel('R')),
-        KeyboardButton(LetterModel('T')),
-        KeyboardButton(LetterModel('Y')),
-        KeyboardButton(LetterModel('U')),
-        KeyboardButton(LetterModel('I')),
-        KeyboardButton(LetterModel('O')),
-        KeyboardButton(LetterModel('P')),
+        KeyboardButton(letter: LetterModel('Q')),
+        KeyboardButton(letter: LetterModel('W')),
+        KeyboardButton(letter: LetterModel('E')),
+        KeyboardButton(letter: LetterModel('R')),
+        KeyboardButton(letter: LetterModel('T')),
+        KeyboardButton(letter: LetterModel('Y')),
+        KeyboardButton(letter: LetterModel('U')),
+        KeyboardButton(letter: LetterModel('I')),
+        KeyboardButton(letter: LetterModel('O')),
+        KeyboardButton(letter: LetterModel('P')),
       ]),
       Row(children: <Widget>[
-        KeyboardButton(LetterModel('A')),
-        KeyboardButton(LetterModel('S')),
-        KeyboardButton(LetterModel('D')),
-        KeyboardButton(LetterModel('F')),
-        KeyboardButton(LetterModel('G')),
-        KeyboardButton(LetterModel('H')),
-        KeyboardButton(LetterModel('J')),
-        KeyboardButton(LetterModel('K')),
-        KeyboardButton(LetterModel('L')),
+        KeyboardButton(letter: LetterModel('A')),
+        KeyboardButton(letter: LetterModel('S')),
+        KeyboardButton(letter: LetterModel('D')),
+        KeyboardButton(letter: LetterModel('F')),
+        KeyboardButton(letter: LetterModel('G')),
+        KeyboardButton(letter: LetterModel('H')),
+        KeyboardButton(letter: LetterModel('J')),
+        KeyboardButton(letter: LetterModel('K')),
+        KeyboardButton(letter: LetterModel('L')),
       ]),
       Row(children: <Widget>[
-        KeyboardButton(LetterModel('-')), //todo: special button
-        KeyboardButton(LetterModel('Z')),
-        KeyboardButton(LetterModel('X')),
-        KeyboardButton(LetterModel('C')),
-        KeyboardButton(LetterModel('V')),
-        KeyboardButton(LetterModel('B')),
-        KeyboardButton(LetterModel('N')),
-        KeyboardButton(LetterModel('M')),
-        KeyboardButton(LetterModel('-')), //todo: special button
+        const KeyboardButton(buttonType: KeyboardButtonType.enter),
+        KeyboardButton(letter: LetterModel('Z')),
+        KeyboardButton(letter: LetterModel('X')),
+        KeyboardButton(letter: LetterModel('C')),
+        KeyboardButton(letter: LetterModel('V')),
+        KeyboardButton(letter: LetterModel('B')),
+        KeyboardButton(letter: LetterModel('N')),
+        KeyboardButton(letter: LetterModel('M')),
+        const KeyboardButton(buttonType: KeyboardButtonType.remove),
       ]),
     ]);
   }
+
+  // List<Widget> _genKeyboardButtonRow(KeyboardRowType type) => field.keyboard
+  //     .getLettersRow(type)
+  //     .map((letter) => KeyboardButton(letter))
+  //     .toList();
 }

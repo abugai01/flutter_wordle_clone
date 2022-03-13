@@ -1,75 +1,83 @@
+import 'dart:developer';
+
 import 'package:flutter_wordle_clone/config/constants.dart';
 import 'package:flutter_wordle_clone/helpers/word_helper.dart';
+import 'package:flutter_wordle_clone/models/keyboard_model.dart';
 import 'package:flutter_wordle_clone/models/letter_model.dart';
 import 'package:flutter_wordle_clone/models/word_model.dart';
 
 //todo: add assertions!
+//todo: block input if all 5 letters are entered
 //todo: is this actually a game model?
 class FieldModel {
-  int activeCellIndex; //todo: private fields with a getter?
-  late Map<int, String> inputs; //todo: remove this shit!!
-  late Map<int, Word>
-      words; //todo: should it be word structs too //todo: maybe it is better that inputs?
-  late Word winner;
+  int activeCellIndex;
+  int activeWordIndex;
+  Map<int, WordModel> words;
+  KeyboardModel keyboard;
+  late WordModel winnerWord;
 
-  FieldModel.start() : activeCellIndex = 0 {
-    _prepareInputs();
+  FieldModel.start()
+      : activeCellIndex = 0,
+        activeWordIndex = 0,
+        words = <int, WordModel>{},
+        keyboard = KeyboardModel() {
     _prepareWords();
     _selectWinner();
-  }
 
-  void _prepareInputs() {
-    for (int i = 0; i < Constants.numberOfCells - 1; i++) {
-      inputs[i] = '';
-    }
+    log(winnerWord.toString()); //todo: this appears 2 times... find out why!
   }
 
   void _prepareWords() {
-    for (int i = 0; i < Constants.numberOfWords - 1; i++) {
-      words[i] = Word.empty();
+    for (int i = 0; i < Constants.numberOfWords; i++) {
+      words[i] = WordModel.empty();
     }
   }
 
   void _selectWinner() {
-    winner = Word(WordHelper().getRandomWord());
+    winnerWord = WordModel(WordHelper().getRandomWord());
   }
 
-  void enterLetter(LetterModel letter) {
-    inputs[activeCellIndex] = letter.char;
-
+  void addLetter(LetterModel letter) {
     //todo: null safety!!!
-    words[currentWordIndex]!.addLetter(currentWordIndex, letter);
+    words[activeWordIndex]!.addLetter(activeCellIndex, letter);
 
-    activeCellIndex += 1;
-    //todo: handle non-existing word here? should not go further if the word is not taken!
-    //todo: what about submitting a row?
+    if (!isAtLastLetterOfWord) {
+      activeCellIndex += 1;
+    }
+
+    log("added letter, now activeCellIndex is: " + activeCellIndex.toString());
   }
 
   void removeLetter() {
-    inputs[activeCellIndex] = '';
-
-    //todo: null safety!!!
-    words[currentWordIndex]!.removeLetter(currentWordIndex);
-  }
-
-  bool isLastLetterOfWord() {
-    if ((activeCellIndex + 1) % Constants.lettersInWord == 0) {
-      return true;
-    } else {
-      return false;
+    //todo: null safety!!! + explain why!
+    if (!isAtFirstLetterOfWord) {
+      activeCellIndex -=
+          1; //todo: check if the last (5th) letter is empty. If yes, then we are actually still at the 4th letter, if not, remove the 5th!
     }
+    words[activeWordIndex]!.removeLetter(activeCellIndex);
+
+    log("removed letter, now activeCellIndex is: " +
+        activeCellIndex.toString());
   }
 
-  //todo: this should definitely be somewhere else... it's a logic component
+  void trySubmitWord() {
+    if (WordHelper.checkWord(currentWord.toString()) == true) {
+      //todo: null safety here!!!
+      words[activeWordIndex]!.check(winnerWord.toString());
+      keyboard.updateKeyboard(words);
+      activeCellIndex = 0;
+      activeWordIndex += 1;
+    }
+    //todo: else maybe vibrate on incorrect ?
+  }
 
-  bool isLastLetterOfField() =>
-      activeCellIndex == Constants.numberOfCells - 1 ? true : false;
+  bool get isAtFirstLetterOfWord => activeCellIndex == 0;
+  bool get isAtLastLetterOfWord =>
+      activeCellIndex == Constants.lettersInWord - 1;
+  bool get isAtLastLetterOfField =>
+      activeWordIndex == Constants.numberOfWords - 1 &&
+      isAtLastLetterOfWord == true;
 
-  int get currentWordIndex => Constants.numberOfCells ~/ (activeCellIndex + 1);
-
-  Word? get currentWord =>
-      words[currentWordIndex] ?? null; //todo: null safety here!!!
-  String get currentLetter =>
-      inputs[activeCellIndex] ?? ''; //todo: null safety here!!!
+  WordModel get currentWord => words[activeWordIndex]!; //todo: null safety
 
 }

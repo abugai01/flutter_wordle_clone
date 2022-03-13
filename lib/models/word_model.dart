@@ -1,16 +1,19 @@
 import 'package:flutter_wordle_clone/config/constants.dart';
-import 'package:flutter_wordle_clone/models/helpers/letter_state.dart';
+import 'package:flutter_wordle_clone/models/enums/letter_state_enum.dart';
 import 'package:flutter_wordle_clone/models/letter_model.dart';
 
-class Word {
+class WordModel {
   late Map<int, LetterModel> model;
 
-  Word(String word) : assert(word.length == Constants.lettersInWord) {
+  //todo: needed?
+  WordModel(String word)
+      : assert(word.length == Constants.lettersInWord),
+        model = <int, LetterModel>{} {
     _fillModel(word);
   }
 
-  Word.empty() {
-    model = _genEmptyStruct();
+  WordModel.empty() {
+    model = _genEmptyModel();
   }
 
   //todo: not safe to have this function! maybe an asserton would help
@@ -20,7 +23,7 @@ class Word {
     }
   }
 
-  Map<int, LetterModel> _genEmptyStruct() {
+  Map<int, LetterModel> _genEmptyModel() {
     Map<int, LetterModel> res = {};
 
     for (int i = 0; i < Constants.lettersInWord; i++) {

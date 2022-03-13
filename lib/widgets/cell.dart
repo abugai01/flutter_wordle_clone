@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wordle_clone/config/style.dart';
-import 'package:flutter_wordle_clone/models/helpers/letter_state.dart';
+import 'package:flutter_wordle_clone/models/enums/letter_state_enum.dart';
 import 'package:flutter_wordle_clone/models/letter_model.dart';
 import 'package:flutter_wordle_clone/widgets/cell_letter.dart';
 
@@ -13,14 +13,17 @@ class Cell extends StatelessWidget {
   Widget build(BuildContext context) {
     final double side = MediaQuery.of(context).size.width * 0.15;
 
-    return Container(
-      height: side,
-      width: side,
-      decoration: BoxDecoration(
-        border: Border.all(color: _getBorderColorByState(letter.state)),
-        color: _getBackgroundColorByState(letter.state),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 3),
+      child: Container(
+        height: side,
+        width: side,
+        decoration: BoxDecoration(
+          border: Border.all(color: _getBorderColorByState(letter.state)),
+          color: _getBackgroundColorByState(letter.state),
+        ),
+        child: CellLetter(letter),
       ),
-      child: CellLetter(letter),
     );
   }
 

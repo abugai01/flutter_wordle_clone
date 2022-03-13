@@ -11,13 +11,16 @@ class Field extends StatelessWidget {
   //todo: cell id?
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: _genGrid(field.words),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Column(
+        children: _genGrid(field.words),
+      ),
     );
   }
 
   //todo: separate widget?
-  List<Widget> _genGrid(Map<int, Word> words) {
+  List<Widget> _genGrid(Map<int, WordModel> words) {
     List<Widget> res = [];
 
     for (int i = 0; i < words.length; i++) {
@@ -28,7 +31,7 @@ class Field extends StatelessWidget {
     return res;
   }
 
-  List<Widget> _genRow(Word word) {
+  List<Widget> _genRow(WordModel word) {
     List<Widget> res = [];
 
     for (int i = 0; i < word.model.length; i++) {

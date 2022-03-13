@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wordle_clone/config/style.dart';
-import 'package:flutter_wordle_clone/models/helpers/letter_state.dart';
+import 'package:flutter_wordle_clone/models/enums/letter_state_enum.dart';
 import 'package:flutter_wordle_clone/models/letter_model.dart';
 
 class CellLetter extends StatelessWidget {
@@ -10,11 +10,11 @@ class CellLetter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double side = MediaQuery.of(context).size.width * 0.15;
-
-    return Text(letter.char,
-        style: TextStyle(
-            fontSize: 36, color: _getLetterColorByState(letter.state)));
+    return Align(
+        alignment: Alignment.center,
+        child: Text(letter.char,
+            style: TextStyle(
+                fontSize: 36, color: _getLetterColorByState(letter.state))));
   }
 
   Color _getLetterColorByState(state) {

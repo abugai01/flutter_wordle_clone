@@ -36,7 +36,7 @@ class Field extends StatelessWidget {
 
     for (int i = 0; i < word.model.length; i++) {
       //todo: null safety!
-      res.add(Cell(word.model[i]!));
+      res.add(Cell(word.model[i]!, word.state));
     }
 
     return res;

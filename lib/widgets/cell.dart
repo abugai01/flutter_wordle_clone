@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wordle_clone/config/style.dart';
 import 'package:flutter_wordle_clone/models/enums/letter_state_enum.dart';
+import 'package:flutter_wordle_clone/models/enums/word_state_enum.dart';
 import 'package:flutter_wordle_clone/models/letter_model.dart';
 import 'package:flutter_wordle_clone/widgets/cell_letter.dart';
 
 class Cell extends StatelessWidget {
   final LetterModel letter;
+  final WordState wordState;
 
-  const Cell(this.letter, {Key? key}) : super(key: key);
+  const Cell(this.letter, this.wordState, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +21,8 @@ class Cell extends StatelessWidget {
         height: side,
         width: side,
         decoration: BoxDecoration(
-          border: Border.all(color: _getBorderColorByState(letter.state)),
-          color: _getBackgroundColorByState(letter.state),
+          border: Border.all(color: _getBorderColor(letter.state, wordState)),
+          color: _getBackgroundColor(letter.state, wordState),
         ),
         child: CellLetter(letter),
       ),
@@ -28,24 +30,31 @@ class Cell extends StatelessWidget {
   }
 
   //todo: same as keyboard button!
-  Color _getBackgroundColorByState(LetterState state) {
-    switch (state) {
-      case LetterState.correctSpot:
-        return green;
-      case LetterState.wrongSpotButPresent:
-        return yellow;
-      case LetterState.notPresent:
-        return darkGrey;
-      case LetterState.unchecked:
-        return white;
-      default:
-        return white;
+  Color _getBackgroundColor(LetterState letterState, WordState wordState) {
+    if (wordState == WordState.checked) {
+      switch (letterState) {
+        case LetterState.correctSpot:
+          return green;
+        case LetterState.wrongSpotButPresent:
+          return yellow;
+        case LetterState.notPresent:
+          return darkGrey;
+        case LetterState.unchecked:
+          return white;
+        default:
+          return white;
+      }
+    } else {
+      return white;
     }
   }
 
-  Color _getBorderColorByState(LetterState state) {
-    if (state == LetterState.unchecked) {
-      return grey;
+  //todo: no border at all instead of white!
+  Color _getBorderColor(LetterState letterState, WordState wordState) {
+    if (wordState == WordState.notStarted) {
+      return lightGrey;
+    } else if (wordState == WordState.active) {
+      return darkGrey;
     } else {
       return white;
     }

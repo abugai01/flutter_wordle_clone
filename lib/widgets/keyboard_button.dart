@@ -17,7 +17,8 @@ class KeyboardButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //todo: pass size from config
-    final double width = MediaQuery.of(context).size.width * 0.08;
+    final double width = MediaQuery.of(context).size.width *
+        (buttonType == KeyboardButtonType.letter ? 0.08 : 0.13);
     final double height = MediaQuery.of(context).size.height * 0.06;
 
     return GestureDetector(
@@ -40,7 +41,7 @@ class KeyboardButton extends StatelessWidget {
           width: width,
           decoration: BoxDecoration(
             color: _getBackgroundColor(buttonType, letter),
-            borderRadius: const BorderRadius.all(Radius.circular(12)),
+            borderRadius: const BorderRadius.all(Radius.circular(6)),
           ),
           child: _genChildByType(buttonType),
         ),

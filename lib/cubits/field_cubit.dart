@@ -69,4 +69,14 @@ class FieldCubit extends Cubit<FieldState> {
     _field = FieldModel.start();
     emit(FieldGenericState(field: _field));
   }
+
+  // Future<void> _winOrLoseGame() => Future.delayed(const Duration(milliseconds: 200), () {
+  //   bool win = false;
+  //
+  //   if (currentWord.isEqual(winnerWord) == true) {
+  //     win = true;
+  //   }
+  //
+  //   //todo: display snackbar?
+  // });
 }

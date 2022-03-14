@@ -7,4 +7,6 @@ class LetterModel {
   LetterModel(this.char)
       : assert(char.length == 0 || char.length == 1),
         state = LetterState.unchecked;
+
+  bool get isEmpty => char == '';
 }

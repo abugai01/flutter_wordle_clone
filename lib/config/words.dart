@@ -1,6 +1,6 @@
-//todo: work with json for fuck's sake!!!
 class Words {
-  static const List<String> playable = [
+  // https://gist.github.com/cfreshman/a03ef2cba789d8cf00c08f767e0fad7b
+  static const List<String> answers = [
     "ABACK",
     "ABASE",
     "ABATE",
@@ -2318,7 +2318,8 @@ class Words {
     "ZONAL"
   ];
 
-  static const List<String> enterableNotPlayable = [
-    'CLOWN',
+  // https://gist.github.com/cfreshman/cdcdf777450c5b5301e439061d29694c
+  static const List<String> allowedGuesses = [
+    // Not used here as the list above is quite playable already
   ];
 }

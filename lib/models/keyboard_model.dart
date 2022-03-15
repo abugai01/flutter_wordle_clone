@@ -1,7 +1,6 @@
 import 'dart:core';
 
 import 'package:flutter_wordle_clone/helpers/keyboard_helper.dart';
-import 'package:flutter_wordle_clone/models/enums/keyboard_row_type_enum.dart';
 import 'package:flutter_wordle_clone/models/enums/letter_state_enum.dart';
 import 'package:flutter_wordle_clone/models/letter_model.dart';
 import 'package:flutter_wordle_clone/models/word_model.dart';
@@ -20,31 +19,11 @@ class KeyboardModel {
     }
   }
 
-  List<LetterModel> getLettersRow(KeyboardRowType type) {
-    List<LetterModel> res = [];
-
-    // for (int i = 0; i < letters.length; i++) {
-    //   //todo: is the order preserved???
-    //   if (KeyboardHelper.isRowType(letters[i], type) == true) {
-    //     res.add(letters[i]);
-    //   }
-    // }
-
-    List<String> row = KeyboardHelper.getRowByType(type);
-    for (int i = 0; i < row.length; i++) {
-      res.add(letters[row[i]]!);
-      //todo: null safety!!
-    }
-
-    return res;
-  }
-
+  //TODO: no need to check everything, only the last submitted word
   void updateKeyboard(Map<int, WordModel> words) {
+    // Note that such looping though the map is only possible cause we have it numbered sequentially
     for (int i = 0; i < words.length; i++) {
-      //todo: null safety!
       for (int j = 0; j < words[i]!.model.length; j++) {
-        //todo: maybe no need to check everything, only submitted words
-
         // If a correct spot has been found, just mark the letter green
         if (words[i]!.model[j]!.state == LetterState.correctSpot) {
           letters[words[i]!.model[j]!.char]!.state = LetterState.correctSpot;

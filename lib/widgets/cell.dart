@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wordle_clone/config/style.dart';
 import 'package:flutter_wordle_clone/models/enums/letter_state_enum.dart';
-import 'package:flutter_wordle_clone/models/enums/word_state_enum.dart';
 import 'package:flutter_wordle_clone/models/letter_model.dart';
-import 'package:flutter_wordle_clone/widgets/cell_letter.dart';
 
 class Cell extends StatelessWidget {
   final LetterModel letter;
-  final WordState wordState;
+  final bool _isSmall;
 
-  const Cell(this.letter, this.wordState, {Key? key}) : super(key: key);
+  const Cell(this.letter, {Key? key})
+      : _isSmall = false,
+        super(key: key);
+
+  // This constructor is used for creating a rules explanation screen only!
+  const Cell.small(this.letter, {Key? key})
+      : _isSmall = true,
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final double side = MediaQuery.of(context).size.width * 0.15;
+    final double side = MediaQuery.of(context).size.width *
+        (_isSmall == true ? smallCellScreenWidthFactor : cellScreenWidthFactor);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 3),
@@ -21,40 +27,66 @@ class Cell extends StatelessWidget {
         height: side,
         width: side,
         decoration: BoxDecoration(
-          border: Border.all(color: _getBorderColor(letter.state, wordState)),
-          color: _getBackgroundColor(letter.state, wordState),
+          border: Border.all(color: _getBorderColor(letter)),
+          color: _getBackgroundColor(letter),
         ),
-        child: CellLetter(letter),
+        child: _CellLetter(
+          letter,
+          isSmall: _isSmall,
+        ),
       ),
     );
   }
 
-  //todo: same as keyboard button!
-  Color _getBackgroundColor(LetterState letterState, WordState wordState) {
-    if (wordState == WordState.checked) {
-      switch (letterState) {
-        case LetterState.correctSpot:
-          return green;
-        case LetterState.wrongSpotButPresent:
-          return yellow;
-        case LetterState.notPresent:
-          return darkGrey;
-        case LetterState.unchecked:
-          return white;
-        default:
-          return white;
-      }
-    } else {
-      return white;
+  Color _getBackgroundColor(LetterModel letter) {
+    switch (letter.state) {
+      case LetterState.correctSpot:
+        return green;
+      case LetterState.wrongSpotButPresent:
+        return yellow;
+      case LetterState.notPresent:
+        return grey;
+      case LetterState.unchecked:
+        return white;
+      default:
+        return white;
     }
   }
 
-  //todo: no border at all instead of white!
-  Color _getBorderColor(LetterState letterState, WordState wordState) {
-    if (wordState == WordState.notStarted) {
+  Color _getBorderColor(LetterModel letter) {
+    if (letter.isEmpty == true) {
       return lightGrey;
-    } else if (wordState == WordState.active) {
-      return darkGrey;
+    } else {
+      if (letter.state == LetterState.unchecked) {
+        return darkGrey;
+      } else {
+        return grey;
+      }
+    }
+  }
+}
+
+class _CellLetter extends StatelessWidget {
+  final LetterModel letter;
+  final bool isSmall;
+
+  const _CellLetter(this.letter, {this.isSmall = false, Key? key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+        alignment: Alignment.center,
+        child: Text(letter.char,
+            style: TextStyle(
+                fontSize: isSmall == true ? 20 : 36,
+                color: _getLetterColorByState(letter.state),
+                fontWeight: FontWeight.bold)));
+  }
+
+  Color _getLetterColorByState(state) {
+    if (state == LetterState.unchecked) {
+      return black;
     } else {
       return white;
     }

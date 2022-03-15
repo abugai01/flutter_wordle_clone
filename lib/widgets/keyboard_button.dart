@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_wordle_clone/config/style.dart';
-import 'package:flutter_wordle_clone/cubits/field_cubit.dart';
+import 'package:flutter_wordle_clone/cubits/game_cubit.dart';
 import 'package:flutter_wordle_clone/models/enums/letter_state_enum.dart';
 import 'package:flutter_wordle_clone/models/letter_model.dart';
 
@@ -16,34 +15,34 @@ class KeyboardButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //todo: pass size from config
     final double width = MediaQuery.of(context).size.width *
-        (buttonType == KeyboardButtonType.letter ? 0.08 : 0.13);
-    final double height = MediaQuery.of(context).size.height * 0.06;
+        (buttonType == KeyboardButtonType.letter
+            ? keyboardLetterButtonScreenWidthFactor
+            : keyboardLargeButtonScreenWidthFactor);
+    final double height =
+        MediaQuery.of(context).size.height * keyboardButtonScreenHeightFactor;
 
     return GestureDetector(
       onTap: () {
         if (buttonType == KeyboardButtonType.letter) {
-          context.read<FieldCubit>().addLetter(letter!); //todo: null safety!
-          HapticFeedback.vibrate();
+          assert(letter != null);
+          context.read<GameCubit>().addLetter(letter!);
         } else if (buttonType == KeyboardButtonType.enter) {
-          context.read<FieldCubit>().trySubmitWord();
-          HapticFeedback.vibrate(); //todo: some other type of vibration?
+          context.read<GameCubit>().trySubmitWord(context);
         } else if (buttonType == KeyboardButtonType.remove) {
-          context.read<FieldCubit>().removeLetter();
-          HapticFeedback.vibrate();
+          context.read<GameCubit>().removeLetter();
         }
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2.5),
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
         child: Container(
           height: height,
           width: width,
           decoration: BoxDecoration(
             color: _getBackgroundColor(buttonType, letter),
-            borderRadius: const BorderRadius.all(Radius.circular(6)),
+            borderRadius: const BorderRadius.all(Radius.circular(5)),
           ),
-          child: _genChildByType(buttonType),
+          child: _genChildByType(buttonType, letter?.state),
         ),
       ),
     );
@@ -51,41 +50,47 @@ class KeyboardButton extends StatelessWidget {
 
   Color _getBackgroundColor(
       KeyboardButtonType buttonType, LetterModel? letter) {
-    if (buttonType == KeyboardButtonType.letter) {
-      //todo: null safety!
-      return _getBackgroundColorByState(letter!.state);
+    if (buttonType == KeyboardButtonType.letter && letter != null) {
+      switch (letter.state) {
+        case LetterState.correctSpot:
+          return green;
+        case LetterState.wrongSpotButPresent:
+          return yellow;
+        case LetterState.notPresent:
+          return grey;
+        case LetterState.unchecked:
+          return lightGrey;
+        default:
+          return lightGrey;
+      }
     } else {
       return lightGrey;
     }
   }
 
-  Color _getBackgroundColorByState(LetterState state) {
-    switch (state) {
-      case LetterState.correctSpot:
-        return green;
-      case LetterState.wrongSpotButPresent:
-        return yellow;
-      case LetterState.notPresent:
-        return darkGrey;
-      case LetterState.unchecked:
-        return lightGrey;
-      default:
-        return lightGrey;
+  Color _getLetterColorByState(LetterState? state) {
+    if (state == LetterState.unchecked) {
+      return black;
+    } else {
+      return white;
     }
   }
 
-  Widget _genChildByType(KeyboardButtonType type) {
+  Widget _genChildByType(KeyboardButtonType type, LetterState? letterState) {
     switch (type) {
       case KeyboardButtonType.letter:
         return Align(
             alignment: Alignment.center,
-            //todo: null safety
-            child: Text(letter!.char, style: const TextStyle(fontSize: 18)));
+            child: Text(letter?.char ?? '',
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: _getLetterColorByState(letterState))));
       case KeyboardButtonType.enter:
         return const Align(
             alignment: Alignment.center,
             child: Text('ENTER',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)));
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)));
       case KeyboardButtonType.remove:
         return const Icon(Icons.backspace_outlined);
     }

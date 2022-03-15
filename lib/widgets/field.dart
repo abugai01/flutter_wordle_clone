@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wordle_clone/models/field_model.dart';
+import 'package:flutter_wordle_clone/models/letter_model.dart';
 import 'package:flutter_wordle_clone/models/word_model.dart';
 import 'package:flutter_wordle_clone/widgets/cell.dart';
 
@@ -8,24 +9,23 @@ class Field extends StatelessWidget {
 
   const Field(this.field, {Key? key}) : super(key: key);
 
-  //todo: cell id?
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: Column(
-        children: _genGrid(field.words),
-      ),
+      child: Row(children: [
+        Expanded(child: Container()),
+        Column(children: _genGrid(field.words)),
+        Expanded(child: Container()),
+      ]),
     );
   }
 
-  //todo: separate widget?
   List<Widget> _genGrid(Map<int, WordModel> words) {
     List<Widget> res = [];
 
-    for (int i = 0; i < words.length; i++) {
-      //todo: null safety!
-      res.add(Row(children: _genRow(words[i]!)));
+    for (WordModel word in words.values) {
+      res.add(Row(children: _genRow(word)));
     }
 
     return res;
@@ -34,9 +34,8 @@ class Field extends StatelessWidget {
   List<Widget> _genRow(WordModel word) {
     List<Widget> res = [];
 
-    for (int i = 0; i < word.model.length; i++) {
-      //todo: null safety!
-      res.add(Cell(word.model[i]!, word.state));
+    for (LetterModel letter in word.model.values) {
+      res.add(Cell(letter));
     }
 
     return res;

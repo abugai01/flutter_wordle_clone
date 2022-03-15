@@ -1,5 +1,5 @@
-enum WordState {
-  checked,
-  active,
-  notStarted,
-}
+// enum WordState {
+//   checked,
+//   active,
+//   notStarted,
+// }

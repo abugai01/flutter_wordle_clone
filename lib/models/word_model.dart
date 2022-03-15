@@ -1,25 +1,21 @@
 import 'package:flutter_wordle_clone/config/constants.dart';
 import 'package:flutter_wordle_clone/models/enums/letter_state_enum.dart';
-import 'package:flutter_wordle_clone/models/enums/word_state_enum.dart';
 import 'package:flutter_wordle_clone/models/letter_model.dart';
 
 class WordModel {
   late Map<int, LetterModel> model;
-  WordState state;
 
-  //todo: needed?
+  // This constructor is only used to generate a winner word at the beginning of a game
   WordModel(String word)
       : assert(word.length == Constants.lettersInWord),
-        state = WordState.notStarted,
         model = <int, LetterModel>{} {
     _fillModel(word);
   }
 
-  WordModel.empty() : state = WordState.notStarted {
+  WordModel.empty() {
     model = _genEmptyModel();
   }
 
-  //todo: not safe to have this function! maybe an asserton would help
   void _fillModel(String word) {
     for (int i = 0; i < word.length; i++) {
       model[i] = LetterModel(word[i]);
@@ -49,12 +45,11 @@ class WordModel {
     model[index] = LetterModel('');
   }
 
-  //todo: maybe take a Word object as an argument? also rename, not clear at the moment
   void check(String word) {
-    //todo: assert it is a valid word?
     assert(word.length == Constants.lettersInWord);
     assert(word.length == model.length);
 
+    // TODO: probably shouldn't iterate through loops this way
     for (int i = 0; i < word.length; i++) {
       if (model[i]!.char == word[i]) {
         model[i]!.state = LetterState.correctSpot;
@@ -63,8 +58,6 @@ class WordModel {
       } else {
         model[i]!.state = LetterState.notPresent;
       }
-
-      state = WordState.checked;
     }
   }
 
@@ -73,7 +66,6 @@ class WordModel {
     String res = '';
 
     for (int i = 0; i < model.length; i++) {
-      //todo: null safety why??
       res += model[i]!.char;
     }
 
@@ -81,4 +73,16 @@ class WordModel {
   }
 
   bool isEqual(WordModel anotherWord) => toString() == anotherWord.toString();
+
+  bool isWordComplete() {
+    bool res = true;
+
+    for (LetterModel letter in model.values) {
+      if (letter.isEmpty == true) {
+        res = false;
+      }
+    }
+
+    return res;
+  }
 }

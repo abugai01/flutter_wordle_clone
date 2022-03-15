@@ -5,8 +5,12 @@ class LetterModel {
   LetterState state;
 
   LetterModel(this.char)
-      : assert(char.length == 0 || char.length == 1),
+      : assert(char.length <= 1),
         state = LetterState.unchecked;
+
+  // This constructor is used for creating a rules explanation screen only!
+  LetterModel.overrideState(this.char, {required this.state})
+      : assert(char.length <= 1);
 
   bool get isEmpty => char == '';
 }

@@ -1,64 +1,69 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_wordle_clone/cubits/field_cubit.dart';
-import 'package:flutter_wordle_clone/cubits/states/field_state.dart';
+import 'package:flutter_wordle_clone/config/style.dart';
+import 'package:flutter_wordle_clone/cubits/game_cubit.dart';
+import 'package:flutter_wordle_clone/cubits/states/game_state.dart';
+import 'package:flutter_wordle_clone/models/enums/game_state_enum.dart';
 import 'package:flutter_wordle_clone/widgets/field.dart';
 import 'package:flutter_wordle_clone/widgets/keyboard.dart';
+import 'package:flutter_wordle_clone/widgets/result_panel.dart';
+import 'package:flutter_wordle_clone/widgets/rules.dart';
+import 'package:flutter_wordle_clone/widgets/show_information_window.dart';
 
-import '../models/enums/game_state_enum.dart';
-
-//todo: inactive border colors!!! light grey vs bright grey
 class GamePage extends StatelessWidget {
   const GamePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: white,
       appBar: AppBar(
-        title: const Text('WORDLE'),
+        title: const Text(
+          'WORDLE',
+          style: TextStyle(color: black, fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
+        elevation: 0,
+        backgroundColor: white,
         actions: [
           IconButton(
-              onPressed: () {
-                context
-                    .read<FieldCubit>()
-                    .resetGame(); //todo: couldn;'t find cubit
-              },
-              icon: const Icon(Icons.autorenew))
+              onPressed: () => showInformationWindow(context,
+                  title: 'HOW TO PLAY', content: const Rules()),
+              icon: const Icon(
+                Icons.help_outline_outlined,
+                color: black,
+              ))
         ],
       ),
-      body: BlocBuilder<FieldCubit, FieldState>(builder: (context, state) {
-        if (state is FieldGenericState) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  //todo: separate widget!
-                  SizedBox(
-                      height: 40,
-                      child: () {
-                        if (state.field.gameState != GameState.active) {
-                          return Align(
-                              alignment: Alignment.center,
-                              child: Text(state.field.gameState == GameState.won
-                                  ? 'You won'
-                                  : 'You lost, answer was ${state.field.winnerWord.toString()}'));
-                        } else {
-                          return null;
-                        }
-                      }()),
-                  Field(state.field),
-                  Expanded(child: Container()),
-                  //todo: actually the field should be expanded
-                  Keyboard(state.field),
-                ]),
-          );
-        } else {
-          return const Center(child: Text('Sorry, something went wrong'));
-        }
-      }),
+      body: BlocProvider<GameCubit>(
+        create: (context) => GameCubit(),
+        child: BlocBuilder<GameCubit, GameState>(builder: (context, state) {
+          if (state is GameGenericState) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                const SizedBox(height: 28),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height *
+                      fieldScreenHeightFactor,
+                  child: Field(state.field),
+                ),
+                Expanded(child: Container()),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height *
+                      keyboardScreenHeightFactor,
+                  child: state.field.gameResultState == GameResultState.active
+                      ? Keyboard(state.field.keyboard)
+                      : ResultPanel(state.field),
+                ),
+              ],
+            );
+          } else {
+            return const Center(child: Text('Sorry, something went wrong'));
+          }
+        }),
+      ),
     );
   }
 }
